@@ -63,9 +63,17 @@ function wse_events_shortcode() {
     while ($query->have_posts()) {
         $query->the_post();
 
-        echo '<li>';
-        echo esc_html(get_the_title());
-        echo '</li>';
+       $event_date = get_post_meta(get_the_ID(), '_wse_event_date', true);
+
+echo '<li>';
+echo '<strong>' . esc_html(get_the_title()) . '</strong>';
+
+if (!empty($event_date)) {
+    echo ' - <span>' . esc_html($event_date) . '</span>';
+}
+
+echo '</li>';
+
     }
 
     echo '</ul>';
