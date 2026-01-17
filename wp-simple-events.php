@@ -43,4 +43,37 @@ function wse_register_event_cpt() {
 }
 
 add_action('init', 'wse_register_event_cpt');
+// Shortcode to display events
+function wse_events_shortcode() {
+
+    $query = new WP_Query(array(
+        'post_type'      => 'event',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish'
+    ));
+
+    if (!$query->have_posts()) {
+        return '<p>No events found.</p>';
+    }
+
+    ob_start();
+
+    echo '<ul class="wse-events">';
+
+    while ($query->have_posts()) {
+        $query->the_post();
+
+        echo '<li>';
+        echo esc_html(get_the_title());
+        echo '</li>';
+    }
+
+    echo '</ul>';
+
+    wp_reset_postdata();
+
+    return ob_get_clean();
+}
+
+add_shortcode('wse_events', 'wse_events_shortcode');
 
