@@ -76,4 +76,59 @@ function wse_events_shortcode() {
 }
 
 add_shortcode('wse_events', 'wse_events_shortcode');
+// Add Event Date meta box
+function wse_add_event_date_metabox() {
+    add_meta_box(
+        'wse_event_date',
+        'Event Date',
+        'wse_event_date_metabox_callback',
+        'event',
+        'side'
+    );
+}
+
+add_action('add_meta_boxes', 'wse_add_event_date_metabox');
+function wse_event_date_metabox_callback($post) {
+
+    wp_nonce_field('wse_save_event_date', 'wse_event_date_nonce');
+
+    $event_date = get_post_meta($post->ID, '_wse_event_date', true);
+    ?>
+    <label for="wse_event_date">Event Date:</label>
+    <input
+        type="date"
+        id="wse_event_date"
+        name="wse_event_date"
+        value="<?php echo esc_attr($event_date); ?>"
+    />
+    <?php
+}
+function wse_save_event_date($post_id) {
+
+    if (!isset($_POST['wse_event_date_nonce'])) {
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['wse_event_date_nonce'], 'wse_save_event_date')) {
+        return;
+    }
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    if (isset($_POST['wse_event_date'])) {
+        update_post_meta(
+            $post_id,
+            '_wse_event_date',
+            sanitize_text_field($_POST['wse_event_date'])
+        );
+    }
+}
+
+add_action('save_post', 'wse_save_event_date');
 
