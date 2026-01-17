@@ -9,5 +9,4 @@
  * License: GPLv2 or later
  * Text Domain: wp-simple-events
  */
-
 defined('ABSPATH') || exit;
